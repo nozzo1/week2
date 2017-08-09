@@ -1,0 +1,28 @@
+<html>
+
+<head>
+<title>Title</title>
+</head>
+
+<body>
+
+<p>This is an R HTML document. When you click the <b>Knit HTML</b> button a web page will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:</p>
+
+<!--begin.rcode
+library(leaflet)
+ebranch <- read.csv("mkebranch.csv", header = TRUE)
+## These two lines are the setup for the mkebranch.csv file
+## They extract the MK postcode branch surgeries from the master CSV file.
+## Data from: https://data.gov.uk/dataset/england-nhs-connecting-for-health-organisation-data-service-data-files-of-general-medical-practices
+## ebranch <- ebranch[grep("^MK", ebranch$V10),]
+## write.csv(ebranch, "data\\mkebranch.csv")
+ebranch$popupText <- paste("<b>",ebranch$V2,"</b><br>",ebranch$V8,"<br>",ebranch$V18)
+ebranchTowns <- as.vector(unique(ebranch$V8))
+ebranchTowns <- append(ebranchTowns, "All", after = length(ebranchTowns))
+leaflet() %>%
+    addTiles() %>%
+    addMarkers(data = ebranch, popup = ebranch$popupText)
+end.rcode-->
+
+</body>
+</html>
