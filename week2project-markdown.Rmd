@@ -1,0 +1,44 @@
+---
+title: "Week 2 Project"
+runtime: shiny
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+
+```{r}
+library(shiny); library(leaflet)
+ebranch <- read.csv("data\\mkebranch.csv", header = TRUE)
+## These two lines are the setup for the mkebranch.csv file
+## They extract the MK postcode branch surgeries from the master CSV file.
+## Data from: https://data.gov.uk/dataset/england-nhs-connecting-for-health-organisation-data-service-data-files-of-general-medical-practices
+## ebranch <- ebranch[grep("^MK", ebranch$V10),]
+## write.csv(ebranch, "data\\mkebranch.csv")
+ebranch$popupText <- paste("<b>",ebranch$V2,"</b><br>",ebranch$V8,"<br>",ebranch$V18)
+ebranchTowns <- as.vector(unique(ebranch$V8))
+ebranchTowns <- append(ebranchTowns, "All", after = length(ebranchTowns))
+
+ui <- fluidPage(
+  titlePanel("The 12th of August 2017"),
+  p(),
+  print("UK NHS Registered Doctors in MK postcode with clickable popups."),
+  leafletOutput("mymap"),
+  p(),
+  print("by Chris Norris for Developing Data Products Course.")
+)
+
+server <- function(input, output, session) {
+  output$mymap <- renderLeaflet({
+    leaflet() %>%
+    addTiles() %>%
+    addMarkers(data = ebranch, popup = ebranch$popupText)
+  })
+}
+
+shinyApp(ui, server)
+
+
+```
